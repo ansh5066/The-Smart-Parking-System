@@ -5,69 +5,125 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Smart Parking System</title>
   <style>
+    /* ===== Basic Styling ===== */
     body {
       margin: 0;
       font-family: Arial, sans-serif;
       background: #f9f9f9;
       color: #222;
+      scroll-behavior: smooth;
     }
+
+    /* ===== Header / Navbar ===== */
     header {
       background: #004aad;
       color: #fff;
       padding: 1rem;
       text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
     }
+
+    nav {
+      margin-top: 0.5rem;
+    }
+
     nav a {
       margin: 0 10px;
       color: #fff;
       text-decoration: none;
+      position: relative;
+      padding-bottom: 4px;
+      transition: border-bottom 0.3s ease, opacity 0.3s ease;
     }
+
+    nav a:hover {
+      opacity: 0.8;
+    }
+
+    nav a.active {
+      border-bottom: 2px solid #fff;
+    }
+
+    /* ===== Hero Section ===== */
     .hero {
       text-align: center;
-      padding: 3rem 1rem;
+      padding: 4rem 1rem;
       background: linear-gradient(135deg, #4facfe, #00f2fe);
       color: white;
     }
+
     .hero h1 {
       font-size: 2.5rem;
-margin-bottom: 1rem;
+      margin-bottom: 1rem;
     }
+
+    /* ===== Reusable Section ===== */
     .section {
       padding: 2rem 1rem;
       max-width: 1000px;
       margin: auto;
     }
+
+    .section h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #004aad;
+    }
+
+    /* ===== Cards Grid ===== */
     .cards {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 1rem;
     }
+
     .card {
       background: white;
       border-radius: 10px;
       padding: 1rem;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+
     .card h3 { margin-top: 0; }
+
+    /* ===== Buttons ===== */
     .btn {
       display: inline-block;
-      padding: 0.5rem 1rem;
+      padding: 0.6rem 1.2rem;
       background: #004aad;
       color: white;
       text-decoration: none;
       border-radius: 5px;
       margin-top: 0.5rem;
+      transition: background 0.3s ease;
     }
+
+    .btn:hover {
+      background: #003580;
+    }
+
+    /* ===== Footer ===== */
     footer {
       text-align: center;
       padding: 1rem;
       background: #eee;
       font-size: 0.9rem;
+      margin-top: 2rem;
     }
   </style>
 </head>
 <body>
-<header>
+
+  <!-- ===== Header ===== -->
+  <header>
     <h1>Smart Parking System</h1>
     <nav>
       <a href="#features">Features</a>
@@ -77,17 +133,19 @@ margin-bottom: 1rem;
     </nav>
   </header>
 
+  <!-- ===== Hero ===== -->
   <section class="hero">
     <h1>Find a Parking Spot in Seconds</h1>
-    <p>Real‑time availability, easy booking, and secure payments.</p>
+    <p>Real-time availability, easy booking, and secure payments.</p>
     <a href="#lots" class="btn">Find Parking</a>
   </section>
 
+  <!-- ===== Features ===== -->
   <section id="features" class="section">
     <h2>Features</h2>
     <div class="cards">
       <div class="card">
-        <h3>Real‑time Data</h3>
+        <h3>Real-time Data</h3>
         <p>See available spots instantly with live updates.</p>
       </div>
       <div class="card">
@@ -103,8 +161,9 @@ margin-bottom: 1rem;
         <p>Integrate parking data into your apps and systems.</p>
       </div>
     </div>
-</section>
+  </section>
 
+  <!-- ===== Parking Lots ===== -->
   <section id="lots" class="section">
     <h2>Nearby Parking Lots</h2>
     <div class="cards">
@@ -126,6 +185,7 @@ margin-bottom: 1rem;
     </div>
   </section>
 
+  <!-- ===== Pricing ===== -->
   <section id="pricing" class="section">
     <h2>Pricing Plans</h2>
     <div class="cards">
@@ -141,24 +201,48 @@ margin-bottom: 1rem;
       </div>
       <div class="card">
         <h3>Enterprise</h3>
-<p>Custom · Unlimited lots · Custom dashboards</p>
+        <p>Custom · Unlimited lots · Custom dashboards</p>
         <a href="#" class="btn">Contact Sales</a>
       </div>
     </div>
   </section>
 
+  <!-- ===== Contact ===== -->
   <section id="contact" class="section">
     <h2>Contact Us</h2>
-    <p>Email: hello@smartparking.example<br>Phone: ‪+91‑98765‑43210‬</p>
+    <p>Email: hello@smartparking.example<br>Phone: ‪+91-98765-43210‬</p>
     <a href="mailto:hello@smartparking.example" class="btn">Send Email</a>
   </section>
 
+  <!-- ===== Footer ===== -->
   <footer>
     © <span id="year"></span> Smart Parking System. All rights reserved.
   </footer>
 
+  <!-- ===== Script Section ===== -->
   <script>
+    // Dynamic year
     document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Highlight active nav link on scroll
+    window.addEventListener('scroll', () => {
+      const sections = document.querySelectorAll('section');
+      const navLinks = document.querySelectorAll('nav a');
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (window.scrollY >= sectionTop - sectionHeight / 3) {
+          current = section.getAttribute('id');
+        }
+      });
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href').includes(current)) {
+          link.classList.add('active');
+        }
+      });
+    });
   </script>
 </body>
 </html>
