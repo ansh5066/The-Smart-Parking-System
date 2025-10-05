@@ -5,18 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Smart Parking System</title>
   <style>
-    /* ===== Basic Styling ===== */
+    /* ===== Root Theme Colors ===== */
+    :root {
+      --bg: #f9f9f9;
+      --text: #222;
+      --primary: #004aad;
+      --card-bg: #fff;
+      --nav-bg: #004aad;
+      --footer-bg: #eee;
+    }
+
+    body.dark {
+      --bg: #121212;
+      --text: #eee;
+      --primary: #2196f3;
+      --card-bg: #1e1e1e;
+      --nav-bg: #222;
+      --footer-bg: #181818;
+    }
+
+    /* ===== Global Styles ===== */
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f9f9f9;
-      color: #222;
+      background: var(--bg);
+      color: var(--text);
       scroll-behavior: smooth;
+      transition: background 0.4s, color 0.4s;
     }
 
     /* ===== Header / Navbar ===== */
     header {
-      background: #004aad;
+      background: var(--nav-bg);
       color: #fff;
       padding: 1rem;
       text-align: center;
@@ -46,6 +66,26 @@
       border-bottom: 2px solid #fff;
     }
 
+    /* ===== Dark Mode Toggle Button ===== */
+    #themeToggle {
+      position: absolute;
+      right: 15px;
+      top: 15px;
+      background: transparent;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      color: #fff;
+      width: 35px;
+      height: 35px;
+      cursor: pointer;
+      font-size: 18px;
+      transition: background 0.3s;
+    }
+
+    #themeToggle:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
     /* ===== Hero Section ===== */
     .hero {
       text-align: center;
@@ -69,7 +109,7 @@
     .section h2 {
       text-align: center;
       margin-bottom: 1.5rem;
-      color: #004aad;
+      color: var(--primary);
     }
 
     /* ===== Cards Grid ===== */
@@ -80,11 +120,11 @@
     }
 
     .card {
-      background: white;
+      background: var(--card-bg);
       border-radius: 10px;
       padding: 1rem;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.4s;
     }
 
     .card:hover {
@@ -98,7 +138,7 @@
     .btn {
       display: inline-block;
       padding: 0.6rem 1.2rem;
-      background: #004aad;
+      background: var(--primary);
       color: white;
       text-decoration: none;
       border-radius: 5px;
@@ -107,17 +147,59 @@
     }
 
     .btn:hover {
-      background: #003580;
+      opacity: 0.9;
     }
 
     /* ===== Footer ===== */
     footer {
       text-align: center;
       padding: 1rem;
-      background: #eee;
+      background: var(--footer-bg);
       font-size: 0.9rem;
       margin-top: 2rem;
     }
+
+    /* ===== Modal Styles ===== */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+
+    .modal-content {
+      background: var(--card-bg);
+      padding: 1.5rem;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .modal input {
+      width: 90%;
+      padding: 0.6rem;
+      margin: 0.5rem 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .close {
+      background: crimson;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      margin-top: 0.5rem;
+    }
+
   </style>
 </head>
 <body>
@@ -125,6 +207,7 @@
   <!-- ===== Header ===== -->
   <header>
     <h1>Smart Parking System</h1>
+    <button id="themeToggle">🌙</button>
     <nav>
       <a href="#features">Features</a>
       <a href="#lots">Find Parking</a>
@@ -169,18 +252,18 @@
     <div class="cards">
       <div class="card">
         <h3>City Center Plaza</h3>
-        <p>68 free spots · ₹40/hr · EV Ready</p>
-        <a href="#" class="btn">Book</a>
+        <p><span class="spots">68</span> free spots · ₹40/hr · EV Ready</p>
+        <button class="btn bookBtn">Book</button>
       </div>
       <div class="card">
         <h3>Riverfront West</h3>
-        <p>12 free spots · ₹30/hr · Open Lot</p>
-        <a href="#" class="btn">Book</a>
+        <p><span class="spots">12</span> free spots · ₹30/hr · Open Lot</p>
+        <button class="btn bookBtn">Book</button>
       </div>
       <div class="card">
         <h3>Tech Park Tower</h3>
-        <p>180 free spots · ₹60/hr · EV Ready</p>
-        <a href="#" class="btn">Book</a>
+        <p><span class="spots">180</span> free spots · ₹60/hr · EV Ready</p>
+        <button class="btn bookBtn">Book</button>
       </div>
     </div>
   </section>
@@ -219,12 +302,25 @@
     © <span id="year"></span> Smart Parking System. All rights reserved.
   </footer>
 
-  <!-- ===== Script Section ===== -->
+  <!-- ===== Booking Modal ===== -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <h3>Book Your Parking Spot</h3>
+      <input type="text" id="name" placeholder="Your Name" />
+      <input type="text" id="vehicle" placeholder="Vehicle Number" />
+      <input type="number" id="hours" placeholder="Hours" min="1" />
+      <button class="btn" id="confirmBook">Confirm</button>
+      <button class="close" id="closeModal">Close</button>
+      <p id="bookMsg" style="margin-top:10px; color:green;"></p>
+    </div>
+  </div>
+
+  <!-- ===== Scripts ===== -->
   <script>
     // Dynamic year
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // Highlight active nav link on scroll
+    // ===== Scroll Highlight =====
     window.addEventListener('scroll', () => {
       const sections = document.querySelectorAll('section');
       const navLinks = document.querySelectorAll('nav a');
@@ -242,6 +338,55 @@
           link.classList.add('active');
         }
       });
+    });
+
+    // ===== Dark Mode Toggle =====
+    const toggle = document.getElementById('themeToggle');
+    toggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+      toggle.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+    });
+
+    // ===== Live Spot Simulation =====
+    setInterval(() => {
+      document.querySelectorAll('.spots').forEach(span => {
+        span.textContent = Math.floor(Math.random() * 200);
+      });
+    }, 4000);
+
+    // ===== Booking Modal =====
+    const modal = document.getElementById('modal');
+    const bookBtns = document.querySelectorAll('.bookBtn');
+    const closeModal = document.getElementById('closeModal');
+    const confirmBook = document.getElementById('confirmBook');
+    const bookMsg = document.getElementById('bookMsg');
+
+    bookBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        modal.style.display = 'flex';
+        bookMsg.textContent = '';
+      });
+    });
+
+    closeModal.addEventListener('click', () => {
+      modal.style.display = 'none';
+    });
+
+    confirmBook.addEventListener('click', () => {
+      const name = document.getElementById('name').value;
+      const vehicle = document.getElementById('vehicle').value;
+      const hours = document.getElementById('hours').value;
+      if (name && vehicle && hours) {
+        bookMsg.textContent = `✅ Booking confirmed for ${name} (${vehicle}) - ${hours} hr(s).`;
+      } else {
+        bookMsg.textContent = "❗ Please fill all fields.";
+        bookMsg.style.color = "red";
+      }
+    });
+
+    // Close modal when clicking outside
+    window.addEventListener('click', (e) => {
+      if (e.target == modal) modal.style.display = 'none';
     });
   </script>
 </body>
