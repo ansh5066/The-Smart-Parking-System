@@ -344,7 +344,7 @@
     const toggle = document.getElementById('themeToggle');
     toggle.addEventListener('click', () => {
       document.body.classList.toggle('dark');
-      toggle.textContent = document.body.classList.contains('dark') ? '☀' : '🌙';
+      toggle.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
     });
 
     // ===== Live Spot Simulation =====
@@ -377,7 +377,7 @@
       const vehicle = document.getElementById('vehicle').value;
       const hours = document.getElementById('hours').value;
       if (name && vehicle && hours) {
-        bookMsg.textContent = ✅ Booking confirmed for ${name} (${vehicle}) - ${hours} hr(s).;
+        bookMsg.textContent = `✅ Booking confirmed for ${name} (${vehicle}) - ${hours} hr(s).`;
       } else {
         bookMsg.textContent = "❗ Please fill all fields.";
         bookMsg.style.color = "red";
@@ -391,3 +391,4 @@
   </script>
 </body>
 </html>
+
